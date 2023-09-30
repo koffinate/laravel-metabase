@@ -35,6 +35,10 @@ class MetabaseComponent extends Component
      */
     public function render(): View
     {
+        if (! config('koffinate.metabase.on_local') && app()->isLocal()) {
+            return view('metabase::off');
+        }
+
         $metabase = app(MetabaseService::class)
             ->setParams($this->params)
             ->setAdditionalParams($this->getAdditionalParams());
