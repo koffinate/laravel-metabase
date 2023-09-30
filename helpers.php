@@ -1,6 +1,6 @@
 <?php
 
-if (!function_exists('metabaseAsset')) {
+if (! function_exists('metabaseAsset')) {
     /**
      * @param  string  $path
      *
@@ -9,6 +9,7 @@ if (!function_exists('metabaseAsset')) {
     function metabaseAsset(string $path): string
     {
         $path = str($path)->replaceMatches('/^[\/\s]+|[\/\s]+$/', '');
+
         return str(config('koffinate.metabase.url'))
             ->replaceMatches('/[\/\s]+$/', '')
             ->append('/')
