@@ -52,7 +52,7 @@ class MetabaseComponent extends Component
             'titled' => $this->titled,
         ];
 
-        if($this->theme) {
+        if ($this->theme) {
             $additionalParameters['theme'] = $this->theme;
         }
 

@@ -26,6 +26,7 @@ class MetabaseService
     public function setParams(array $params): static
     {
         $this->params = $params;
+
         return $this;
     }
 
@@ -37,6 +38,7 @@ class MetabaseService
     public function setAdditionalParams(array $params): static
     {
         $this->additionalParams = $params;
+
         return $this;
     }
 
