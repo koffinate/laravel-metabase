@@ -1,6 +1,13 @@
-<iframe
-        src="{{ $iframeUrl }}"
-        {{ $attributes->merge(['width' => '100%', 'height' => '800px', 'style' => 'border:0']) }}
->
+@php
+  $defaultAttrs = [
+    'width' => '100%',
+    'height' => '400px',
+    'style' => 'border:0',
+    'onload' => 'iFrameResize({}, this)'
+  ];
+@endphp
+<iframe src="{{ $iframeUrl }}" {{ $attributes->merge($defaultAttrs) }} allowtransparency></iframe>
 
-</iframe>
+@pushonce('js')
+  <script src="{{ metabaseAsset('app/iframeResizer.js') }}"></script>
+@endpushonce

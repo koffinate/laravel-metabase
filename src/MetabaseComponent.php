@@ -1,62 +1,56 @@
 <?php
 
-namespace Laravolt\Metabase;
+namespace Koffinate\Metabase;
 
+use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
 class MetabaseComponent extends Component
 {
-    public ?int $dashboard;
-
-    public ?int $question;
-
-    public bool $bordered;
-
-    public bool $titled;
-
-    public ?string $theme;
-
-    /**
-     * @var string[]
-     */
-    public ?array $params;
-
     /**
      * Create a new component instance.
      *
-     * @param int|null $dashboard
-     * @param int|null $question
-     * @param array<string> $params
+     * @param  int|null  $dashboard
+     * @param  int|null  $question
+     * @param  array<string>  $params
+     * @param  bool  $bordered
+     * @param  bool  $titled
+     * @param  string|null  $theme
      */
-    public function __construct(?int $dashboard = null, ?int $question = null, array $params = [], $bordered = false, $titled = false, $theme = null)
-    {
-        $this->dashboard = $dashboard;
-        $this->question = $question;
-        $this->params = $params;
-        $this->bordered = $bordered;
-        $this->titled = $titled;
-        $this->theme = $theme;
+    public function __construct(
+        protected readonly int|null $dashboard = null,
+        protected readonly int|null $question = null,
+        protected readonly array $params = [],
+        protected readonly bool $bordered = false,
+        protected readonly bool $titled = false,
+        protected readonly string|null $theme = null
+    ) {
+        //
     }
 
     /**
      * Get the view / contents that represent the component.
      *
-     * @return \Illuminate\Contracts\View\View|string
+     * @return \Illuminate\Contracts\View\View
      */
-    public function render()
+    public function render(): View
     {
-        $metabase = app(MetabaseService::class);
-        $metabase->setParams($this->params);
-        $metabase->setAdditionalParams($this->getAdditionalParams());
+        $metabase = app(MetabaseService::class)
+            ->setParams($this->params)
+            ->setAdditionalParams($this->getAdditionalParams());
+
         $iframeUrl = $metabase->generateEmbedUrl((int) $this->dashboard, (int) $this->question);
+
         return view('metabase::iframe', compact('iframeUrl'));
     }
 
-
-    private function getAdditionalParams()
+    /** @internal */
+    private function getAdditionalParams(): array
     {
-        $additionalParameters['bordered'] = $this->bordered;
-        $additionalParameters['titled'] = $this->titled;
+        $additionalParameters = [
+            'bordered' => $this->bordered,
+            'titled' => $this->titled,
+        ];
 
         if($this->theme) {
             $additionalParameters['theme'] = $this->theme;

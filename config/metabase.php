@@ -1,15 +1,6 @@
 <?php
 
-/*
- * Set specific configuration variables here
- */
 return [
-    'route' => [
-        'enabled' => true,
-        'middleware' => ['web', 'auth'],
-        'prefix' => 'metabase',
-    ],
-    'view' => [
-        'layout' => 'laravolt::layouts.centered',
-    ],
+    'url' => env('METABASE_URL'),
+    'secret' => env('METABASE_SECRET'),
 ];

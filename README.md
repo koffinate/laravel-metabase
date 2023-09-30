@@ -1,6 +1,8 @@
-# Laravolt Metabase
+# Laravel Metabase
 Blade component to embed metabase dashboard or question in your website.
 For more information about Metabase, please visit [Metabase official website](https://metabase.com/).
+
+the original code was forked from [Laravolt Metabase](https://github.com/laravolt/metabase)
 
 ## Installation
 ```bash

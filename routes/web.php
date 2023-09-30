@@ -1,12 +1,14 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+
 Route::group(
     [
-        'prefix' => config('laravolt.metabase.route.prefix'),
+        'prefix' => config('koffinate.metabase.route.prefix'),
         'as' => 'metabase::',
-        'middleware' => config('laravolt.metabase.route.middleware'),
+        'middleware' => config('koffinate.metabase.route.middleware'),
     ],
     function () {
-        Route::resource('embed', \Laravolt\Metabase\Controllers\EmbedController::class)->only('show');
+        Route::resource('embed', \Koffinate\Metabase\Controllers\EmbedController::class)->only('show');
     }
 );

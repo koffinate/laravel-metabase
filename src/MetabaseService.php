@@ -1,6 +1,6 @@
 <?php
 
-namespace Laravolt\Metabase;
+namespace Koffinate\Metabase;
 
 use InvalidArgumentException;
 use Lcobucci\JWT\Configuration;
@@ -9,37 +9,36 @@ use Lcobucci\JWT\Signer\Key\InMemory;
 
 class MetabaseService
 {
-    /**
-     * @var array<string> @params
-     */
-    private $params;
+    /** @var array<string> @params */
+    private array $params;
+
+    /** @var array<string> @params */
+    private array $additionalParams;
+
+    /** @var string @params */
+    private string $type = 'dashboard';
 
     /**
-     * @var array<string> @params
-     */
-    private $additionalParams;
-
-    /**
-     * @param array<string> $params
+     * @param  array<string>  $params
      *
-     * @return void
+     * @return \Koffinate\Metabase\MetabaseService
      */
-    public function setParams(array $params): void
+    public function setParams(array $params): static
     {
         $this->params = $params;
+        return $this;
     }
 
     /**
-     * @param array $params
+     * @param  array  $params
      *
-     * @return void
+     * @return \Koffinate\Metabase\MetabaseService
      */
-    public function setAdditionalParams(array $params): void
+    public function setAdditionalParams(array $params): static
     {
         $this->additionalParams = $params;
+        return $this;
     }
-
-    private string $type = 'dashboard';
 
     /**
      * @param int|null $dashboard
@@ -49,22 +48,30 @@ class MetabaseService
      */
     public function generateEmbedUrl(?int $dashboard, ?int $question): string
     {
+        $metabaseUrl = str(config('koffinate.metabase.url'))->replaceMatches('/[\/\s]+$/', '')->toString();
+        $metabaseSecret = config('koffinate.metabase.secret');
+
+        if (! $metabaseUrl && ! $metabaseSecret) {
+            throw new InvalidArgumentException('Metabase URL and Secret not yet set');
+        }
+
         $config = Configuration::forSymmetricSigner(
             new Sha256(),
-            InMemory::plainText(config('services.metabase.secret'))
+            InMemory::plainText($metabaseSecret)
         );
 
-        $builder = $config
-            ->builder();
+        $builder = $config->builder();
 
-        if ($dashboard) {
-            $builder->withClaim('resource', ['dashboard' => $dashboard]);
-        } elseif ($question) {
-            $builder->withClaim('resource', ['question' => $question]);
-            $this->type = 'question';
-        } else {
+        if (! $dashboard && ! $question) {
             throw new InvalidArgumentException('Dashboard or question must be specified');
         }
+
+        $claimParam = ['dashboard' => $dashboard];
+        if ($question) {
+            $claimParam = ['question' => $question];
+            $this->type = 'question';
+        }
+        $builder->withClaim('resource', $claimParam);
 
         $params = $this->params;
         if (empty($params)) {
@@ -72,13 +79,11 @@ class MetabaseService
         }
         $builder->withClaim('params', $params);
 
-        $token = $builder
-            ->getToken($config->signer(), $config->signingKey())
-            ->toString();
+        $token = $builder->getToken($config->signer(), $config->signingKey())->toString();
 
         return sprintf(
             '%s/embed/%s/%s#'.http_build_query($this->additionalParams),
-            config('services.metabase.url'),
+            $metabaseUrl,
             $this->type,
             $token
         );
