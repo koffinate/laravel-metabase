@@ -43,7 +43,14 @@ class MetabaseComponent extends Component
             ->setParams($this->params)
             ->setAdditionalParams($this->getAdditionalParams());
 
-        $iframeUrl = $metabase->generateEmbedUrl((int) $this->dashboard, (int) $this->question);
+        try {
+            $iframeUrl = $metabase->generateEmbedUrl((int)$this->dashboard, (int)$this->question);
+        } catch (\Exception $e) {
+            if (! config('app.debug')) {
+                return view('metabase::off', ['message' => $e->getMessage()]);
+            }
+            throw $e;
+        }
 
         return view('metabase::iframe', compact('iframeUrl'));
     }
