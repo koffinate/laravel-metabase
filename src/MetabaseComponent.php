@@ -37,10 +37,10 @@ class MetabaseComponent extends Component
     {
         if (config('koffinate.metabase.off')) {
             return view('metabase::off', [
-                'message' => config('koffinate.metabase.off_message', 'metabase was disabled')
+                'message' => config('koffinate.metabase.off_message', 'metabase was disabled'),
             ]);
         }
-        
+
         if (! config('koffinate.metabase.on_local') && app()->isLocal()) {
             return view('metabase::off');
         }
