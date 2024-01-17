@@ -55,6 +55,7 @@ class MetabaseComponent extends Component
             $message = config('app.debug')
                 ? $e->getMessage()
                 : 'failed to load metabase';
+                
             return view('metabase::off', ['message' => $message]);
             // throw $e;
         }
