@@ -52,10 +52,12 @@ class MetabaseComponent extends Component
         try {
             $iframeUrl = $metabase->generateEmbedUrl((int) $this->dashboard, (int) $this->question);
         } catch (\Exception $e) {
-            if (! config('app.debug')) {
-                return view('metabase::off', ['message' => $e->getMessage()]);
-            }
-            throw $e;
+            $message = config('app.debug')
+                ? $e->getMessage()
+                : 'failed to load metabase';
+
+            return view('metabase::off', ['message' => $message]);
+            // throw $e;
         }
 
         return view('metabase::iframe', compact('iframeUrl'));
